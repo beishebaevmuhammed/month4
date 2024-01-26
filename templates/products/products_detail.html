@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+    <h1>Product detail</h1>
+    <h2>{{ product.title }} {{ product.rate }}</h2>
+    <p>{{ product.content }}</p>
+    <h2>Dates:</h2>
+    <p>Created: {{ product.created_at }}</p>
+    <p>Updated: {{ product.updated_at }}</p>
+    <h1>Reviews:</h1>
+    {% for review in product.reviews.all %}
+        <p>{{ review.text }}</p>
+    {% endfor %}
+{% endblock %}
+
+
