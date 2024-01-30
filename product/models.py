@@ -7,6 +7,7 @@ class Category(models.Model):
         return self.title
 class Product(models.Model):
     title = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='')
     content = models.TextField()
     rate = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
