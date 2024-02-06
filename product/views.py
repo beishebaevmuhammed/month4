@@ -1,7 +1,9 @@
 from datetime import datetime
 from django.http import HttpResponse
-from django.shortcuts import render
-from product.models import Product, Category
+from django.shortcuts import render, redirect
+
+from product.forms import ProductCreateForm, CategoryCreateForm, ReviewCreateForm
+from product.models import Product, Category, Review
 
 
 # Create your views here.
@@ -38,12 +40,60 @@ def category_view(request):
     return render(request, 'products/categories.html', context=context)
 
 
-def product_detail_view(request, id):
-    try:
-        product = Product.objects.get(id=id)
-    except Product.DoesNotExist:
-        return HttpResponse('404')
-    context = {
-        "product": product,
-    }
-    return render(request, 'products/products_detail.html', context=context, )
+def product_detail_view(request, product_id=None):
+    if request.method == 'GET':
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return render(request, 'errors/404.html')
+        context = {
+            "product": product,
+            'form': ReviewCreateForm()
+        }
+        return render(request, 'products/products_detail.html', context)
+    elif request.method == 'POST':
+        form = ReviewCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            Review.objects.create(product_id=product_id, **form.cleaned_data)
+            return redirect(f'/products/{product_id}/')
+        context = {
+            'form': form,
+        }
+        return render(request, 'products/products_detail.html', context)
+
+
+def product_create_view(request):
+    if request.method == 'GET':
+        context = {
+            "form": ProductCreateForm()
+        }
+        return render(request, 'products/products_create.html', context=context, )
+    elif request.method == 'POST':
+        form = ProductCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            Product.objects.create(**form.cleaned_data)
+            return redirect('/products/')
+        else:
+            context = {
+                "form": ProductCreateForm()
+            }
+            return render(request, 'products/products_create.html', context=context, )
+
+def category_create_view(request):
+    if request.method == 'GET':
+        context = {
+            "form": CategoryCreateForm(),
+        }
+        return render(request, 'products/categories_create.html', context=context)
+
+    elif request.method == 'POST':
+        form = CategoryCreateForm(request.POST)
+        if form.is_valid():
+            Category.objects.create(**form.cleaned_data)
+            return redirect('/categories/')
+        context = {
+            "form": form
+        }
+        return render(request, 'products/categories_create.html', context=context)
+
+
