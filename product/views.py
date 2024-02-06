@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
@@ -23,9 +25,9 @@ from product.models import Product, Category, Review
 def main_view(request):
     return render(request, 'index.html')
 
-
+@login_required
 def product_view(request):
-    products = Product.objects.all()
+    products = Product.objects.exclude(user=request.user)
     context = {
         "products": products,
     }
