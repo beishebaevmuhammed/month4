@@ -4,6 +4,14 @@
     <h1>
         Posts
     </h1>
+            <form action="/products/" method="GET">
+            <input type="text" name="search" placeholder="Search">
+            <input type="submit" value="Search">
+        </form>
+
+        <a href="?order=title" method="GET">Title</a>
+        <a href="?order=-title" method="GET">-Title</a>
+
 
     {% for product in products %}
         <div class="card" style="width: 18rem;">
@@ -15,6 +23,15 @@
             </div>
         </div>
     {% endfor %}
+      <center>
+    {% for page in pages %}
+        <button type="button" class="btn btn-secondary">
+            <a href="?page={{ page }}" method="GET">{{ page }}</a>
+        </button>
+    {% endfor %}
+    </center>
+
+
 
 {% endblock %}
 
